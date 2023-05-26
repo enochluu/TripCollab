@@ -1,0 +1,5 @@
+#!/bin/bash
+service postgresql start
+service redis-server start
+nohup python3 /home/project/backend/api/server.py &
+npm --prefix /home/project/frontend/ run dev

@@ -1,0 +1,633 @@
+openapi: 3.0.1
+info:
+  title: Group Trip Planner
+  description: SENG2021 project
+  version: '0.1'
+servers:
+  - url: 'http://127.0.0.1:5000'
+paths:
+  /login:
+    post:
+      description: user login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: user@gmail.com
+                token:
+                  type: string
+                  example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /group:
+    post:
+      description: create a new group
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_name:
+                  type: string
+                  example: group1
+                token:
+                  type: string
+                  example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+                trip_date:
+                  type: string
+                  example: 2021-3-31
+                location:
+                  type: string
+                  example: Sydney
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Group name exists. Please try a new one.
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /location:
+    get:
+      description: get trip location of the group
+      parameters:
+        - name: group_id
+          in: query
+          schema:
+            type: string
+          example: group1_2021-04-11
+      responses:
+          '200':
+            description: OK
+            content:
+              application/json:
+                schema:
+                  type: object
+                  properties:
+                    location:
+                      type: string
+                      example: Sydney
+      servers:
+          - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /activities/{group_id}:
+    get:
+      description: list all nominated activities of certain group
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: group1_2021-04-11
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    activity_id:
+                      type: integer
+                      example: 1
+                    activity_name:
+                      type: string
+                      example: Sydney Opera House
+                    rating:
+                      type: integer
+                      example: 5
+                    photo_reference:
+                      type: string
+                      example: ATtYBwK1ghiSsTXR9y3e4RfmkQX4T...
+                    category:
+                      type: string
+                      example: nature
+                    photo_content:
+                      type: string
+                      example: /9j/4AAQSkZJRgABAQAAAQABAAD/4QAqRXhpZgAASUkqAAgA...
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /search:
+    get:
+      description: search place by name
+      parameters:
+        - name: activity
+          in: query
+          schema:
+            type: string
+          example: 'Sydney Opera House'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  google_places_id: 
+                    type: string
+                    example: 'ChIJgUbEo8cfqodwifo1'
+                  place_name: 
+                    type: string
+                    example: 'Sydney Opera House'
+                  rating: 
+                    type: integer
+                    example: 5
+                  photo_references:
+                    type: array
+                    items:
+                      type: string
+                      example: 'ATtYBwK1ghiSsTXR9y3e4RfmkQX4T'
+                  address:
+                    type: string
+                    example: Bennelong Point, Sydney NSW 2000, Australia
+                  phone_number:
+                    type: string
+                    example: (02) 9250 7111
+                  website:
+                    type: string
+                    example: https://www.sydneyoperahouse.com/
+                  opening_hours:
+                    type: array
+                    items:
+                      type: string
+                      example: 'Monday: 9:30 AM – 5:00 PM'
+                  category:
+                    type: string
+                    example: nature
+                  reviews:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        author_name:
+                          type: string
+                          example: Jeffrey O'Neill
+                        rating:
+                          type: integer
+                          example: 4
+                        text:
+                          type: string
+                          example: Came with a friend to enjoy my guest visit back after lock down.\n\nGreat views. Staff are friendly and efficient. Prices ain't too bad. You're paying for the amazing views.\n\nFun place to sit and chat
+
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /activities/nominate:
+    post:
+      description: nominate activity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_id:
+                  type: string
+                  example: group1_2021-04-11
+                google_places_id:
+                  type: string
+                  example: ChIJgUbEo8cfqodwifo1
+                activity_name:
+                  type: string
+                  example: Sydney Opera House
+                rating:
+                  type: integer
+                  example: 5
+                photo_reference:
+                  type: string
+                  example: 'ATtYBwK1ghiSsTXR9y3e4RfmkQX4T'
+                category:
+                  type: string
+                  example: sightseeing
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /activities/vote:
+    post:
+      description: vote for nominated activity or undo vote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_id:
+                  type: string
+                  example: group1_2021-04-11
+                activity_id:
+                  type: integer
+                  example: 1
+                activity_name:
+                  type: string
+                  example: Sydney Opera House
+                rating:
+                  type: integer
+                  example: 5
+                photo_reference:
+                  type: string
+                  example: 'ATtYBwK1ghiSsTXR9y3e4RfmkQX4T'
+                category:
+                  type: string
+                  example: sightseeing
+                token:
+                  type: string
+                  example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /poll/{group_id}:
+    get:
+      description: get poll result
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: group1_2021-04-11
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  active_user:
+                    type: integer
+                    example: 3
+                  activity_poll:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        activity_id:
+                          type: integer
+                          example: 1
+                        activity_name:
+                          type: string
+                          example: 'Sydney Opera House'
+                        vote_count:
+                          type: integer
+                          example: 2
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /activities/suggest:
+    get:
+      description: suggest three activities based on questionairre response
+      parameters:
+        - name: location
+          in: query
+          schema:
+            type: string
+          example: Sydney
+        - name: cultural
+          in: query
+          schema:
+            type: integer
+          example: 3
+        - name: sightseeing
+          in: query
+          schema:
+            type: integer
+          example: 4
+        - name: nature
+          in: query
+          schema:
+            type: integer
+          example: 5
+        - name: recreation
+          in: query
+          schema:
+            type: integer
+          example: 3
+        - name: picnic
+          in: query
+          schema:
+            type: integer
+          example: 3
+        - name: sport
+          in: query
+          schema:
+            type: integer
+          example: 3
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    google_places_id:
+                      type: string
+                      example: 'ChIJgUbEo8cfqokR5lP9'
+                    name:
+                      type: string
+                      example: 'Sydney Opera House'
+                    rating:
+                      type: integer
+                      example: 5
+                    photo_reference:
+                      type: string
+                      example: 'ATtYBwK1ghiSsTXR9y3e4RfmkQX4T'
+                    photo_content:
+                      type: string
+                      example: /9j/4AAQSkZJRgABAQAAAQABAAD/4QAqRXhpZgAASUkqAAgA...
+                    category:
+                      type: string
+                      example: sightseeing
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+
+  /side-activities/suggest/{group_id}:
+    get:
+      description: suggest three nearby side-activities based on main activity
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: group1_2021-04-11
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    main_activity:
+                      type: string
+                      example: Sydney Opera House
+                    suggestions:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          google_places_id:
+                            type: string
+                            example: 'ChIJgUbEo8cfqokR5lP9'
+                          name:
+                            type: string
+                            example: 'Sydney Opera House'
+                          rating:
+                            type: integer
+                            example: 5
+                          photo_reference:
+                            type: string
+                            example: 'ATtYBwK1ghiSsTXR9y3e4RfmkQX4T'
+                          photo_content:
+                            type: string
+                            example: /9j/4AAQSkZJRgABAQAAAQABAAD/4QAqRXhpZgAASUkqAAgA...
+                          category:
+                            type: string
+                            example: sightseeing
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /side-activities:
+    post:
+      description: add side activities
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_id:
+                  type: string
+                  example: group1_2021-04-11
+                token:
+                  type: string
+                  example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+                google_places_id:
+                  type: string
+                  example: ChIJgUbEo8cfqodwifo1
+                activity_name:
+                  type: string
+                  example: Sydney Opera House
+                rating:
+                  type: integer
+                  example: 5
+                photo_reference:
+                  type: string
+                  example: 'ATtYBwK1ghiSsTXR9y3e4RfmkQX4T'
+                category:
+                  type: string
+                  example: sightseeing
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /schedule:
+    put:
+      description: change scheduled time of activity
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_id:
+                  type: string
+                  example: group1_2021-04-11
+                activity_id:
+                  type: integer
+                  example: 1
+                start_time:
+                  type: string
+                  example: '14:00'
+                end_time:
+                  type: string
+                  example: '16:00'
+                token:
+                  type: string
+                  example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    post:
+      description: choose activity and add to schedule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                group_id:
+                  type: string
+                  example: group1_2021-04-11
+                activity_id:
+                  type: integer
+                  example: 1
+                token:
+                  type: string
+                  example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
+  /schedule/{group_id}:
+    get:
+      description: get schedule for chosen activities
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: group1_2021-04-11
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    activity_id:
+                      type: integer
+                      example: 1
+                    activity_name:
+                      type: string
+                      example: Sydney Opera House
+                    start_time:
+                      type: string
+                      example: '13:00'
+                    end_time:
+                      type: string
+                      example: '15:00'
+                    type:
+                      type: string
+                      example: main
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    delete:
+      description: remove activity from schedule
+      parameters:
+        - name: group_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: group1_2021-04-11
+        - name: activity_id
+          in: query
+          schema:
+            type: integer
+          example: 1
+        - name: token
+          in: query
+          schema:
+            type: string
+          example: XAAGgR4b1lHWNCpqrAhcpoAZDZD
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples: {}
+      servers:
+        - url: 'http://127.0.0.1:5000'
+    servers:
+      - url: 'http://127.0.0.1:5000'
